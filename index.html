@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CARG-TT Calculator</title>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #calculator-container {
+      background-color: hsl(188, 40%, 39%);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    label {
+      font-size: 16px;
+      display: block;
+      margin-top: 10px;
+    }
+
+    input {
+      font-size: 14px;
+      padding: 8px;
+      width: 100%;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      transition-duration: 0.4s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result-container {
+      margin-top: 20px;
+    }
+
+    #carg-tt-score {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="calculator-container">
+    <h1>CARG-TT Calculator</h1>
+
+    <form id="carg-tt-form" onsubmit="calculateCargTTScore(); return false;">
+      <label for="age">Age:</label>
+      <input type="number" id="age" required>
+
+      <label for="creatinine">Serum Creatinine (mg/dL):</label>
+      <input type="number" step="0.01" id="creatinine" required>
+
+      <label for="albumin">Serum Albumin (g/dL):</label>
+      <input type="number" step="0.01" id="albumin" required>
+
+      <label for="bsa">Body Surface Area (m²):</label>
+      <input type="number" step="0.01" id="bsa" required>
+
+      <label for="cancer-type">Cancer Type (Solid or Hematologic):</label>
+      <input type="text" id="cancer-type" required>
+
+      <label for="weight">Weight (kg):</label>
+      <input type="number" step="0.01" id="weight" required>
+
+      <button type="submit">Calculate CARG-TT Score</button>
+    </form>
+
+    <div id="result-container">
+      <p id="carg-tt-score">CARG-TT Score: <span id="result-value">0</span></p>
+      <p id="risk-level">Risk Level: <span id="risk-level-value">Low to Moderate Risk</span></p>
+    </div>
+  </div>
+
+  <script>
+    function calculateCargTTScore() {
+      const age = parseFloat(document.getElementById('age').value);
+      const creatinine = parseFloat(document.getElementById('creatinine').value);
+      const albumin = parseFloat(document.getElementById('albumin').value);
+      const bsa = parseFloat(document.getElementById('bsa').value);
+      const cancerType = document.getElementById('cancer-type').value;
+      const weight = parseFloat(document.getElementById('weight').value);
+
+      const crcl = (140 - age) * weight / (72 * creatinine);
+      let cargTTScore = 0;
+
+      if (crcl < 45) {
+        cargTTScore += 2;
+      } else if (crcl >= 45 && crcl < 60) {
+        cargTTScore += 1;
+      }
+
+      if (albumin < 3.5) {
+        cargTTScore += 1;
+      }
+
+      if (bsa < 1.5) {
+        cargTTScore += 1;
+      } else if (bsa >= 2.5) {
+        cargTTScore += 2;
+      }
+
+      if (cancerType.toLowerCase() === "hematologic") {
+        cargTTScore += 1;
+      }
+
+      document.getElementById('result-value').textContent = cargTTScore;
+
+      const riskLevel = cargTTScore >= 3 ? "High Risk of Chemotherapy Toxicity" : "Low to Moderate Risk of Chemotherapy Toxicity";
+      document.getElementById('risk-level-value').textContent = riskLevel;
+    }
+  </script>
+</body>
+
+</html>
